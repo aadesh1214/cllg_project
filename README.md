@@ -1,8 +1,8 @@
 # HRMS Lite - Human Resource Management System
 
-A lightweight, full-stack Human Resource Management System built with the MERN stack. This application allows administrators to manage employee records and track daily attendance.
+A lightweight Human Resource Management System built with **FastAPI** (Python) backend and **Angular 17** (TypeScript) frontend.
 
-![HRMS Lite](https://img.shields.io/badge/HRMS-Lite-blue) ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![React](https://img.shields.io/badge/React-18-blue) ![MongoDB](https://img.shields.io/badge/MongoDB-6+-green)
+![HRMS Lite](https://img.shields.io/badge/HRMS-Lite-blue) ![Python](https://img.shields.io/badge/Python-3.9+-green) ![Angular](https://img.shields.io/badge/Angular-17-red) ![MongoDB](https://img.shields.io/badge/MongoDB-6+-green)
 
 ## 🌐 Live Demo
 
@@ -16,34 +16,35 @@ A lightweight, full-stack Human Resource Management System built with the MERN s
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-  - [Running Locally](#running-locally)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Setup](#frontend-setup)
 - [API Documentation](#api-documentation)
 - [Deployment](#deployment)
-- [Assumptions & Limitations](#assumptions--limitations)
+- [Environment Variables](#environment-variables)
 
 ## ✨ Features
 
 ### Core Features
 - **Employee Management**
-  - Add new employees with ID, name, email, and department
+  - Add new employees with details (name, email, phone, department, designation, joining date)
   - View list of all employees with search functionality
-  - Delete employees (with cascading deletion of attendance records)
+  - Delete employees from the system
+  - Real-time search filtering
   
 - **Attendance Management**
-  - Mark daily attendance (Present/Absent) for employees
-  - View attendance records for all employees or specific employee
-  - Automatic update if attendance already exists for the same date
+  - Mark daily attendance (Present, Absent, Late, Half Day)
+  - Filter attendance by date and status
+  - Check-in and check-out time tracking
+  - Add notes to attendance records
 
 ### Bonus Features
 - 📊 **Dashboard** with summary statistics (total employees, today's attendance)
 - 📅 **Date filtering** for attendance records
-- 📈 **Attendance summary** showing total present/absent days per employee
-- 🏢 **Department-wise** employee distribution
+- 📈 **Department-wise** employee distribution chart
+- 🏢 **Recent employees** listing on dashboard
 
 ### UI Features
-- Clean, professional interface using Chakra UI
+- Clean, modern interface with custom SCSS styling
 - Responsive design (mobile-friendly)
 - Loading states, empty states, and error handling
 - Toast notifications for user feedback
@@ -53,46 +54,62 @@ A lightweight, full-stack Human Resource Management System built with the MERN s
 
 | Layer | Technology |
 |-------|------------|
-| **Frontend** | React 18, Vite, Chakra UI |
-| **Backend** | Node.js, Express.js |
-| **Database** | MongoDB with Mongoose ODM |
-| **HTTP Client** | Axios |
-| **Routing** | React Router v6 |
+| **Frontend** | Angular 17, TypeScript, SCSS |
+| **Backend** | FastAPI, Python 3.9+ |
+| **Database** | MongoDB with Motor (async driver) |
+| **Validation** | Pydantic |
+| **Server** | Uvicorn (ASGI) |
 
 ## 📁 Project Structure
 
 ```
-hrms-lite/
-├── backend/
-│   ├── src/
+nikita_task/
+├── backend_fastapi/               # FastAPI Backend
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py               # FastAPI app entry point
 │   │   ├── config/
-│   │   │   └── db.js              # MongoDB connection
-│   │   ├── controllers/
-│   │   │   ├── employeeController.js
-│   │   │   └── attendanceController.js
-│   │   ├── middleware/
-│   │   │   └── errorHandler.js    # Global error handling
+│   │   │   ├── __init__.py
+│   │   │   ├── database.py       # MongoDB async connection
+│   │   │   └── settings.py       # Environment settings (Pydantic)
 │   │   ├── models/
-│   │   │   ├── Employee.js        # Employee schema
-│   │   │   └── Attendance.js      # Attendance schema
-│   │   └── routes/
-│   │       ├── employeeRoutes.js
-│   │       └── attendanceRoutes.js
-│   ├── server.js                  # Entry point
-│   ├── package.json
-│   └── .env.example
+│   │   │   ├── __init__.py
+│   │   │   ├── employee.py       # Employee Pydantic models
+│   │   │   └── attendance.py     # Attendance Pydantic models
+│   │   ├── routes/
+│   │   │   ├── __init__.py
+│   │   │   ├── employee.py       # Employee API routes
+│   │   │   └── attendance.py     # Attendance API routes
+│   │   └── services/
+│   │       ├── __init__.py
+│   │       ├── employee.py       # Employee business logic
+│   │       └── attendance.py     # Attendance business logic
+│   ├── requirements.txt          # Python dependencies
+│   ├── .gitignore
+│   └── env.example.txt           # Environment variables template
 │
-├── frontend/
+├── frontend_angular/              # Angular 17 Frontend
 │   ├── src/
-│   │   ├── api/                   # API service layer
-│   │   ├── components/            # Reusable UI components
-│   │   ├── pages/                 # Page components
-│   │   ├── theme/                 # Chakra UI theme
-│   │   ├── utils/                 # Helper functions
-│   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   ├── app/
+│   │   │   ├── core/
+│   │   │   │   ├── models/       # TypeScript interfaces
+│   │   │   │   └── services/     # HTTP services
+│   │   │   ├── shared/
+│   │   │   │   └── components/   # Reusable UI components
+│   │   │   ├── features/
+│   │   │   │   ├── dashboard/
+│   │   │   │   ├── employees/
+│   │   │   │   └── attendance/
+│   │   │   ├── app.component.ts
+│   │   │   ├── app.config.ts
+│   │   │   └── app.routes.ts
+│   │   ├── environments/
+│   │   ├── styles.scss           # Global styles
+│   │   ├── index.html
+│   │   └── main.ts
+│   ├── angular.json
 │   ├── package.json
-│   └── .env.example
+│   └── tsconfig.json
 │
 └── README.md
 ```
@@ -101,77 +118,108 @@ hrms-lite/
 
 ### Prerequisites
 
-- **Node.js** (v18 or higher)
-- **npm** (v9 or higher)
+- **Python** 3.9 or higher
+- **Node.js** 18 or higher (for Angular CLI)
 - **MongoDB** (local installation or MongoDB Atlas account)
 
-### Installation
+### Backend Setup
 
-1. **Clone the repository**
+1. **Navigate to the backend directory**
    ```bash
-   git clone https://github.com/yourusername/hrms-lite.git
-   cd hrms-lite
+   cd backend_fastapi
    ```
 
-2. **Install Backend Dependencies**
+2. **Create and activate a virtual environment**
    ```bash
-   cd backend
+   python -m venv venv
+   
+   # Windows
+   venv\Scripts\activate
+   
+   # macOS/Linux
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Create environment file**
+   ```bash
+   # Copy the template
+   cp env.example.txt .env
+   
+   # Edit .env with your MongoDB connection string
+   ```
+
+5. **Start the server**
+   ```bash
+   uvicorn app.main:app --reload --port 8000
+   ```
+   
+   Backend will run at `http://localhost:8000`
+   
+   API Documentation (Swagger UI): `http://localhost:8000/docs`
+
+### Frontend Setup
+
+1. **Navigate to the frontend directory**
+   ```bash
+   cd frontend_angular
+   ```
+
+2. **Install dependencies**
+   ```bash
    npm install
    ```
 
-3. **Install Frontend Dependencies**
+3. **Start the development server**
    ```bash
-   cd ../frontend
-   npm install
+   ng serve
    ```
+   
+   Frontend will run at `http://localhost:4200`
+
+4. **Open your browser** and navigate to `http://localhost:4200`
 
 ### Environment Variables
 
-#### Backend (`backend/.env`)
+#### Backend (`backend_fastapi/.env`)
 ```env
-PORT=5001
-MONGO_URI=mongodb://localhost:27017/hrms-lite
-FRONTEND_URL=http://localhost:3000
+MONGODB_URL=mongodb://localhost:27017
+DATABASE_NAME=hrms_lite
 ```
 
 For MongoDB Atlas:
 ```env
-MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/hrms-lite?retryWrites=true&w=majority
+MONGODB_URL=mongodb+srv://<username>:<password>@<cluster>.mongodb.net
+DATABASE_NAME=hrms_lite
 ```
 
-#### Frontend (`frontend/.env`)
-```env
-VITE_API_URL=http://localhost:5001
+#### Frontend (`frontend_angular/src/environments/`)
+
+Development (`environment.development.ts`):
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8000/api'
+};
 ```
 
-### Running Locally
-
-1. **Start MongoDB** (if using local installation)
-   ```bash
-   mongod
-   ```
-
-2. **Start the Backend**
-   ```bash
-   cd backend
-   npm run dev
-   ```
-   Backend will run at `http://localhost:5001`
-
-3. **Start the Frontend** (in a new terminal)
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-   Frontend will run at `http://localhost:3000`
-
-4. **Open your browser** and navigate to `http://localhost:3000`
+Production (`environment.production.ts`):
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'https://your-api-url.onrender.com/api'
+};
+```
 
 ## 📚 API Documentation
 
 ### Base URL
 ```
-http://localhost:5001/api
+http://localhost:8000/api
 ```
 
 ### Employee Endpoints
@@ -179,61 +227,80 @@ http://localhost:5001/api
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/employees` | Get all employees |
-| `GET` | `/employees/:id` | Get employee by ID |
+| `GET` | `/employees/{id}` | Get employee by ID |
 | `POST` | `/employees` | Create new employee |
-| `DELETE` | `/employees/:id` | Delete employee |
+| `DELETE` | `/employees/{id}` | Delete employee |
 
 #### Create Employee Request Body
 ```json
 {
-  "employeeId": "EMP001",
-  "fullName": "John Doe",
+  "name": "John Doe",
   "email": "john.doe@example.com",
-  "department": "Engineering"
+  "phone": "+1234567890",
+  "department": "Engineering",
+  "designation": "Software Engineer",
+  "joiningDate": "2024-01-15"
 }
 ```
 
-**Valid Departments:** Engineering, Human Resources, Finance, Marketing, Sales, Operations, IT, Legal, Other
+**Valid Departments:** Engineering, Marketing, Sales, HR, Finance, Operations, Design, Product
 
 ### Attendance Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/attendance` | Get all attendance records |
-| `GET` | `/attendance?startDate=&endDate=` | Filter by date range |
-| `GET` | `/attendance/employee/:employeeId` | Get attendance for specific employee |
+| `GET` | `/attendance/employee/{employeeId}` | Get attendance for specific employee |
 | `POST` | `/attendance` | Mark attendance |
-| `GET` | `/attendance/summary/:employeeId` | Get attendance summary |
 | `GET` | `/attendance/dashboard` | Get dashboard statistics |
 
 #### Mark Attendance Request Body
 ```json
 {
   "employeeId": "64abc123def456...",
-  "date": "2026-02-03",
-  "status": "Present"
+  "date": "2024-01-15",
+  "status": "Present",
+  "checkIn": "09:00",
+  "checkOut": "18:00",
+  "notes": "Worked from office"
 }
 ```
 
-**Valid Status:** `Present`, `Absent`
+**Valid Status:** `Present`, `Absent`, `Late`, `Half Day`
 
 ### Response Format
 
-**Success Response:**
+**Success Response (Employee):**
 ```json
 {
-  "success": true,
-  "data": { ... },
-  "message": "Operation successful"
+  "id": "64abc123def456...",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "+1234567890",
+  "department": "Engineering",
+  "designation": "Software Engineer",
+  "joiningDate": "2024-01-15T00:00:00",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```
+
+**Dashboard Response:**
+```json
+{
+  "totalEmployees": 10,
+  "presentToday": 8,
+  "absentToday": 2,
+  "departments": [
+    { "name": "Engineering", "count": 5 },
+    { "name": "Marketing", "count": 3 }
+  ]
 }
 ```
 
 **Error Response:**
 ```json
 {
-  "success": false,
-  "message": "Error description",
-  "errors": ["Validation error 1", "Validation error 2"]
+  "detail": "Error description"
 }
 ```
 
@@ -244,44 +311,42 @@ http://localhost:5001/api
 1. Create a new **Web Service** on [Render](https://render.com)
 2. Connect your GitHub repository
 3. Configure:
-   - **Build Command:** `npm install`
-   - **Start Command:** `node server.js`
+   - **Root Directory:** `backend_fastapi`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - **Environment Variables:**
-     - `PORT`: 5001
-     - `MONGO_URI`: Your MongoDB Atlas connection string
-     - `FRONTEND_URL`: Your Vercel frontend URL
+     - `MONGODB_URL`: Your MongoDB Atlas connection string
+     - `DATABASE_NAME`: `hrms_lite`
 
 ### Frontend Deployment (Vercel)
 
 1. Import your project on [Vercel](https://vercel.com)
-2. Set the **Root Directory** to `frontend`
+2. Set the **Root Directory** to `frontend_angular`
 3. Configure:
-   - **Framework Preset:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-   - **Environment Variables:**
-     - `VITE_API_URL`: Your Render backend URL
+   - **Framework Preset:** Angular
+   - **Build Command:** `ng build --configuration=production`
+   - **Output Directory:** `dist/frontend_angular/browser`
+4. Update `environment.production.ts` with your Render backend URL
 
 ### MongoDB Atlas Setup
 
 1. Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
 2. Create a database user
 3. Whitelist IP addresses (0.0.0.0/0 for all IPs)
-4. Get your connection string and update `MONGO_URI`
+4. Get your connection string and update `MONGODB_URL`
 
 ## ⚠️ Assumptions & Limitations
 
 ### Assumptions
 - Single admin user (no authentication required as per requirements)
-- One attendance record per employee per day
-- Employees can only be added with predefined department options
-- Attendance can only be marked for current or past dates
+- One attendance record per employee per day (can be updated)
+- Employees can be categorized into predefined departments
+- Attendance can have various statuses (Present, Absent, Late, Half Day)
 
 ### Limitations
 - No user authentication/authorization
 - No employee profile editing (only add and delete)
 - No bulk attendance marking
-- No attendance editing/deletion (only update by re-marking)
 - No pagination for large datasets
 - No data export functionality
 
@@ -294,13 +359,11 @@ http://localhost:5001/api
 
 ## 📝 License
 
-This project is created for educational/assessment purposes.
+This project is licensed under the MIT License.
 
 ## 👤 Author
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+Built with ❤️ using FastAPI and Angular
 
 ---
 
